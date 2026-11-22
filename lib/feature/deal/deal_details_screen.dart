@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rescu/feature/shared_widget/flash_deal_live.dart';
 
 import '../../app_config.dart';
 import '../shared_widget/the_network_image.dart';
@@ -33,31 +34,41 @@ class DealDetailsScreen extends GetView<DealDetailsController> {
                           fontSize: 22, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(deal.storeName,
-                      style: TextStyle(
-                          fontSize: 15, color: Colors.grey.shade700)),
+                      style:
+                          TextStyle(fontSize: 15, color: Colors.grey.shade700)),
                   Text(deal.storeAddress,
-                      style: TextStyle(
-                          fontSize: 13, color: Colors.grey.shade500)),
+                      style:
+                          TextStyle(fontSize: 13, color: Colors.grey.shade500)),
                   const SizedBox(height: 16),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('฿${deal.price.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: AppConfig.primaryGreen)),
-                      const SizedBox(width: 8),
-                      Text('฿${deal.originalPrice.toStringAsFixed(0)}',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade500,
-                              decoration: TextDecoration.lineThrough)),
-                      const Spacer(),
-                      Obx(() => Chip(
-                            avatar: const Icon(Icons.inventory_2_outlined,
-                                size: 16),
-                            label: Text('${controller.quantityLeft ?? '-'} left'),
-                          )),
+                      Row(
+                        children: [
+                          Text('฿${deal.price.toStringAsFixed(0)}',
+                              style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppConfig.primaryGreen)),
+                          const SizedBox(width: 8),
+                          Text('฿${deal.originalPrice.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade500,
+                                  decoration: TextDecoration.lineThrough)),
+                          const Spacer(),
+                          Obx(() => Chip(
+                                avatar: const Icon(Icons.inventory_2_outlined,
+                                    size: 16),
+                                label: Text(
+                                    '${controller.quantityLeft ?? '-'} left'),
+                              )),
+                        ],
+                      ),
+                      if (deal.isFlashSale && deal.flashSaleEndsAt != null) ...[
+                        const SizedBox(height: 8),
+                        FlashDealLive(endFlashDealDate: deal.flashSaleEndsAt),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -98,8 +109,8 @@ class DealDetailsScreen extends GetView<DealDetailsController> {
                   ),
                   const SizedBox(height: 16),
                   const Text('What you get',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600)),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 6),
                   Text(deal.description,
                       style: TextStyle(
@@ -130,11 +141,14 @@ class DealDetailsScreen extends GetView<DealDetailsController> {
         color: Colors.white,
         child: SizedBox(
           width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: controller.addToCart,
-            icon: const Icon(Icons.add_shopping_cart),
-            label: const Text('Add to bag'),
-          ),
+          child: Obx(() {
+            final expired = controller.flashExpired.value;
+            return FilledButton.icon(
+              onPressed: expired ? null : controller.addToCart,
+              icon: const Icon(Icons.add_shopping_cart),
+              label: Text(expired ? 'Flash sale ended' : 'Add to bag'),
+            );
+          }),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rescu/feature/shared_widget/flash_deal_live.dart';
 
 import '../../../app_config.dart';
 import '../../../model/deal_model.dart';
@@ -83,20 +84,7 @@ class FlashDealsSection extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           color: AppConfig.primaryGreen)),
                                   const Spacer(),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.shade50,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text('Ends soon',
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.red.shade700)),
-                                  ),
-                                ],
+                                 FlashDealLive(endFlashDealDate: deal.flashSaleEndsAt)]
                               ),
                             ],
                           ),

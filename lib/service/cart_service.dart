@@ -13,6 +13,7 @@ class CartService extends GetxService {
   final itemCount = 0.obs;
 
   void add(DealModel deal) {
+    if(deal.isFlashDealExpire) return;
     final existing = items.firstWhereOrNull((i) => i.deal.id == deal.id);
     if (existing != null) {
       if (existing.quantity >= deal.quantityLeft) {

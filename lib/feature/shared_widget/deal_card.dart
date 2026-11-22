@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rescu/feature/shared_widget/flash_deal_live.dart';
 
 import '../../app_config.dart';
 import '../../model/deal_model.dart';
@@ -30,31 +31,24 @@ class DealCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                TheNetworkImage(url: deal.imageUrl, height: 160, width: double.infinity),
+                TheNetworkImage(
+                    url: deal.imageUrl, height: 160, width: double.infinity),
                 if (deal.isFlashSale)
                   Positioned(
                     top: 8,
                     left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade600,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        'FLASH SALE',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold),
-                      ),
+                    child: FlashDealLive(
+                      endFlashDealDate: deal.flashSaleEndsAt,
+                      backgroundColor: Colors.red.shade600,
+                      textColor: Colors.white,
                     ),
                   ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.65),
                       borderRadius: BorderRadius.circular(6),

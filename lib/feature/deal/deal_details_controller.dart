@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 
 import '../../model/deal_model.dart';
@@ -22,25 +24,36 @@ class DealDetailsController extends GetxController {
   final _quantityLeft = RxnInt();
   int? get quantityLeft => _quantityLeft.value;
   Worker? cartWorker;
+  final flashExpired = false.obs;
+  Timer? _flashTimer;
 
   @override
   void onInit() {
     super.onInit();
     deal = Get.arguments as DealModel;
+    flashExpired.value = deal.isFlashDealExpire;
     _quantityLeft.value = deal.quantityLeft;
     analytics.logEvent('deal_details_view', {
       'deal_id': deal.id,
       'source': Get.parameters['source'] ?? 'unknown',
     });
+    final end = deal.flashSaleEndsAt;
+    if (end != null && !flashExpired.value) {
+      _flashTimer = Timer(end.difference(DateTime.now()), () {
+        flashExpired.value = true;
+      });
+
+    }
     // Whenever the cart changes, re-check this deal's remaining stock so the
     // details screen never shows stale availability.
-   cartWorker=ever(cartService.itemCount, (_) => _recheckAvailability());
+    cartWorker = ever(cartService.itemCount, (_) => _recheckAvailability());
   }
 
   @override
-  void onClose(){
+  void onClose() {
     cartWorker?.dispose();
-    super.dispose();
+    _flashTimer?.cancel();
+    super.onClose();
   }
 
   Future<void> _recheckAvailability() async {
@@ -50,6 +63,7 @@ class DealDetailsController extends GetxController {
   }
 
   void addToCart() {
+    if (deal.isFlashDealExpire) return;
     cartService.add(deal);
     Get.snackbar(
       'Added to bag',

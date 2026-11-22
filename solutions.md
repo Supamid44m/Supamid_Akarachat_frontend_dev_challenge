@@ -34,3 +34,5 @@ fix: store the work in a field like RES-102 and when onclose dispose it , Ok I r
 22/11/2026
 * use AI report about todo task remaining for F-1 · Live flash-sale countdowns and how improve performance 
 
+* vibe code  use AI add logic about when flash deal expire remove from cart  
+

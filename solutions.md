@@ -20,6 +20,12 @@ fix: store the work in a field like RES-102 and when onclose dispose it , Ok I r
 ```
 
 
+### RES-106 · Wrong pickup times; "Pickup today" filter misses deals
+```
+root cause: Date and time not parse to local time and filter isToday wrong compare with UTC time and today local time
+fix: parse start and end pickup date to local use function toLocal()  and in logic is today compare with month and year
+```
+
 
 
 ### AI Log
@@ -35,4 +41,8 @@ fix: store the work in a field like RES-102 and when onclose dispose it , Ok I r
 * use AI report about todo task remaining for F-1 · Live flash-sale countdowns and how improve performance 
 
 * vibe code  use AI add logic about when flash deal expire remove from cart  
+
+
+23/11/2026
+
 

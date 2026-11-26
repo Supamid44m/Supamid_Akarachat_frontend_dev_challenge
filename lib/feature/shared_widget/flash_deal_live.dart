@@ -1,8 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-class FlashDealLive extends StatefulWidget {
+import '../../service/flash_ticker.dart';
+
+/// Live flash-sale countdown badge.
+///
+/// Only the inner [Text] rebuilds each second (via the shared [FlashTicker]);
+/// the badge container and the parent card stay untouched.
+class FlashDealLive extends StatelessWidget {
   final DateTime? endFlashDealDate;
   final Color? backgroundColor;
   final Color? textColor;
@@ -14,55 +18,35 @@ class FlashDealLive extends StatefulWidget {
     this.textColor,
   });
 
-  @override
-  State<FlashDealLive> createState() => _FlashDealLiveState();
-}
-
-class _FlashDealLiveState extends State<FlashDealLive> {
-  Timer? timer;
-
-  @override
-  void initState() {
-    super.initState();
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
+  static String format(Duration remaining) {
+    if (remaining.isNegative || remaining == Duration.zero) return 'Expired';
+    final h = remaining.inHours;
+    final mm = (remaining.inMinutes % 60).toString().padLeft(2, '0');
+    final ss = (remaining.inSeconds % 60).toString().padLeft(2, '0');
+    return h > 0 ? '$h:$mm:$ss' : '$mm:$ss';
   }
 
   @override
   Widget build(BuildContext context) {
-    final String text;
-    final remaining = widget.endFlashDealDate?.difference(DateTime.now());
-    if (remaining == null) {
-      return const SizedBox.shrink();
-    } else if (remaining.isNegative) {
-      text = 'Expired';
-    } else {
-      final h = remaining.inHours;
-      final m = remaining.inMinutes % 60;
-      final s = remaining.inSeconds % 60;
-      final mm = m.toString().padLeft(2, '0');
-      final ss = s.toString().padLeft(2, '0');
-      text = h > 0 ? '$h:$mm:$ss' : '$mm:$ss';
-    }
+    final end = endFlashDealDate;
+    if (end == null) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: widget.backgroundColor ??Colors.red.shade50,
+        color: backgroundColor ?? Colors.red.shade50,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(text,
+      child: AnimatedBuilder(
+        animation: FlashTicker.instance,
+        builder: (_, __) => Text(
+          format(end.difference(DateTime.now())),
           style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: widget.textColor?? Colors.red.shade700)),
+              color: textColor ?? Colors.red.shade700),
+        ),
+      ),
     );
   }
 }

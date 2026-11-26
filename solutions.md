@@ -7,7 +7,7 @@ then I ask AI and suggest me use Timer instead  becuase can cencel when has new 
 
 Rejected: Future.delayed cannot be cancelled when a new keystroke arrives, so old searches still ran. That's why I switched to a cancellable Timer.
 
-Edge case : If i find sushi test when spacebar OnChange function will work and make 
+Edge case: debounce only cancels a pending timer, not a request already sent. If I pause on "su" and then finish "sushi test", the slower "su" response could overwrite the newer results, so I ignore any response that isn't from the latest query.
 ```
 
 ### RES-102 · Crash after leaving My orders
@@ -70,7 +70,9 @@ Not handled yet. Possible fix: isToday => (start is today) || isOpenNow.
 - use AI compiled sentence and grammar
 
 
-- AI suggestion for PickupWindowModel was incomplete: isToday only compares start with today. I questioned it with an overnight window (22:00-01:00) and found that after midnight a window that is still open is not counted as today.
+``` 
+AI suggestion for PickupWindowModel was incomplete: isToday only compares start with today. I questioned it with an overnight window (22:00-01:00) and found that after midnight a window that is still open is not counted as today.
+```
 
 ### Design questions
 
